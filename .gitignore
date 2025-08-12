@@ -1,0 +1,85 @@
+## .NET & Visual Studio - Updated 2025
+## Base: VisualStudio.gitignore + custom adjustments
+## Source: https://github.com/github/gitignore
+
+# User-specific settings
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.DotSettings.user
+
+# Build output folders
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Dd]ebug*/
+[Rr]elease*/
+x64/
+x86/
+bld/
+artifacts/
+
+# Visual Studio cache and database files
+.vs/
+*.VC.db
+*.VC.VC.opendb
+ipch/
+
+# Local run/debug settings
+**/Properties/launchSettings.json
+
+# Test and coverage results
+[Tt]est[Rr]esult*/
+*.coverage
+*.coveragexml
+*.VisualState.xml
+
+# Benchmark results
+BenchmarkDotNet.Artifacts/
+
+# NuGet packages
+*.nupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Azure / publish settings
+*.azurePubxml
+*.pubxml
+*.publishproj
+PublishScripts/
+*.publishsettings
+publish/
+
+# Generated / temporary files
+*.cache
+*.pdb
+*.tmp
+*.log
+*.bak
+
+# SQL Server database files
+*.mdf
+*.ldf
+*.ndf
+
+# Node.js dependencies
+node_modules/
+
+# JetBrains Rider IDE
+.idea/
+*.sln.iml
+
+# Python cache (for mixed .NET/Python solutions)
+__pycache__/
+*.pyc
+
+# Docker local overrides
+**/docker-compose.override.yml
+
+# Misc temporary/backup files
+~$*
+*~
