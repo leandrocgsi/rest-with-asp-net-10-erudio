@@ -1,4 +1,6 @@
 using RestWithASPNET10Erudio.Configurations;
+using RestWithASPNET10Erudio.Repositories;
+using RestWithASPNET10Erudio.Repositories.Impl;
 using RestWithASPNET10Erudio.Services;
 using RestWithASPNET10Erudio.Services.Impl;
 
@@ -10,6 +12,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddScoped<IPersonServices, PersonServicesImpl>();
+builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 
 var app = builder.Build();
 
