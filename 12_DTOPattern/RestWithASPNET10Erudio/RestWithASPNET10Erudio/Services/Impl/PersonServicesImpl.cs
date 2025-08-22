@@ -1,4 +1,6 @@
-﻿using RestWithASPNET10Erudio.Model;
+﻿using RestWithASPNET10Erudio.Data.Converter.Impl;
+using RestWithASPNET10Erudio.Data.DTO;
+using RestWithASPNET10Erudio.Model;
 using RestWithASPNET10Erudio.Repositories;
 
 namespace RestWithASPNET10Erudio.Services.Impl
@@ -7,30 +9,36 @@ namespace RestWithASPNET10Erudio.Services.Impl
     {
 
         private IRepository<Person> _repository;
+        private readonly PersonConverter _converter;
 
         public PersonServicesImpl(IRepository<Person> repository)
         {
             _repository = repository;
+            _converter = new PersonConverter();
         }
 
-        public List<Person> FindAll()
+        public List<PersonDTO> FindAll()
         {
-            return _repository.FindAll();
+            return _converter.ParseList(_repository.FindAll());
         }
 
-        public Person FindById(long id)
+        public PersonDTO FindById(long id)
         {
-            return _repository.FindById(id);
+            return _converter.Parse(_repository.FindById(id));
         }
 
-        public Person Create(Person person)
+        public PersonDTO Create(PersonDTO person)
         {
-            return _repository.Create(person);
+            var entity = _converter.Parse(person);
+            entity = _repository.Create(entity);
+            return _converter.Parse(entity);
         }
 
-        public Person Update(Person person)
+        public PersonDTO Update(PersonDTO person)
         {
-            return _repository.Update(person);
+            var entity = _converter.Parse(person);
+            entity = _repository.Update(entity);
+            return _converter.Parse(entity);
         }
         public void Delete(long id)
         {

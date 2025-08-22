@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RestWithASPNET10Erudio.Data.DTO;
 using RestWithASPNET10Erudio.Model;
 using RestWithASPNET10Erudio.Services;
 
@@ -39,7 +40,7 @@ namespace RestWithASPNET10Erudio.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Book book)
+        public IActionResult Post([FromBody] BookDTO book)
         {
             _logger.LogInformation("Creating new Book: {firstName}", book.Title);
 
@@ -53,7 +54,7 @@ namespace RestWithASPNET10Erudio.Controllers
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] Book book)
+        public IActionResult Put([FromBody] BookDTO book)
         {
             _logger.LogInformation("Updating book with ID {id}", book.Id);
 

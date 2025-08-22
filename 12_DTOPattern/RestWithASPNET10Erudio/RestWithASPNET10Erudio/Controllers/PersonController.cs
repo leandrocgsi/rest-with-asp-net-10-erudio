@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RestWithASPNET10Erudio.Data.DTO;
 using RestWithASPNET10Erudio.Model;
 using RestWithASPNET10Erudio.Services;
 
@@ -39,7 +40,7 @@ namespace RestWithASPNET10Erudio.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Person person)
+        public IActionResult Post([FromBody] PersonDTO person)
         {
             _logger.LogInformation("Creating new Person: {firstName}", person.FirstName);
 
@@ -53,7 +54,7 @@ namespace RestWithASPNET10Erudio.Controllers
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] Person person)
+        public IActionResult Put([FromBody] PersonDTO person)
         {
             _logger.LogInformation("Updating person with ID {id}", person.Id);
 

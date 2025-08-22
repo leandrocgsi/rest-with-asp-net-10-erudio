@@ -1,4 +1,6 @@
-﻿using RestWithASPNET10Erudio.Model;
+﻿using Mapster;
+using RestWithASPNET10Erudio.Data.DTO;
+using RestWithASPNET10Erudio.Model;
 using RestWithASPNET10Erudio.Repositories;
 
 namespace RestWithASPNET10Erudio.Services.Impl
@@ -12,24 +14,28 @@ namespace RestWithASPNET10Erudio.Services.Impl
             _repository = repository;
         }
 
-        public List<Book> FindAll()
+        public List<BookDTO> FindAll()
         {
-            return _repository.FindAll();
+            return _repository.FindAll().Adapt<List<BookDTO>>();
         }
 
-        public Book FindById(long id)
+        public BookDTO FindById(long id)
         {
-            return _repository.FindById(id);
+            return _repository.FindById(id).Adapt<BookDTO>();
         }
 
-        public Book Create(Book book)
+        public BookDTO Create(BookDTO book)
         {
-            return _repository.Create(book);
+            var entity = book.Adapt<Book>();
+            entity = _repository.Create(entity);
+            return entity.Adapt<BookDTO>();
         }
 
-        public Book Update(Book book)
+        public BookDTO Update(BookDTO book)
         {
-            return _repository.Update(book);
+            var entity = book.Adapt<Book>();
+            entity = _repository.Update(entity);
+            return entity.Adapt<BookDTO>();
         }
         public void Delete(long id)
         {
