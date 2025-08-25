@@ -1,4 +1,4 @@
-﻿using RestWithASPNET10Erudio.Data.DTO;
+﻿using RestWithASPNET10Erudio.Data.DTO.V1;
 
 namespace RestWithASPNET10Erudio.Services
 {

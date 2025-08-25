@@ -1,4 +1,4 @@
-﻿namespace RestWithASPNET10Erudio.Data.DTO
+﻿namespace RestWithASPNET10Erudio.Data.DTO.V1
 {
     public class PersonDTO
     {
