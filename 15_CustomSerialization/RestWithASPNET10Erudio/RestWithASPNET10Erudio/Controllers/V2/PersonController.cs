@@ -30,6 +30,9 @@ namespace RestWithASPNET10Erudio.Controllers.V2
                 _logger.LogError("Failed to create person with name {firstName}", person.FirstName);
                 return NotFound();
             }
+            // createdPerson.LastName = null;
+            // createdPerson.Age = 0;
+            createdPerson.Age = 20;
             return Ok(createdPerson);
         }
     }
