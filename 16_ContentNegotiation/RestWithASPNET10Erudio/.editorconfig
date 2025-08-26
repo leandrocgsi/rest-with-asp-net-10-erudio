@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# ASP0019: Suggest using IHeaderDictionary.Append or the indexer
+dotnet_diagnostic.ASP0019.severity = none
