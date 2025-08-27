@@ -1,0 +1,10 @@
+# Base API variable
+@HelloDocker_HostAddress = http://localhost:80
+
+### Health Check
+GET {{HelloDocker_HostAddress}}/
+Accept: application/json
+
+### Hello Docker
+GET {{HelloDocker_HostAddress}}/hello-docker
+Accept: application/json
