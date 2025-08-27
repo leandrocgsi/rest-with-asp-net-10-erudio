@@ -1,0 +1,31 @@
+{
+	"info": {
+		"_postman_id": "b3b178f0-9ef1-458d-9721-c0df94bb9cef",
+		"name": "ASP.NET 2026 REST API's from 0 to Azure and GCP with .NET 10, Docker e Kubernetes",
+		"description": "REST API RESTful developed in course ASP.NET 2026 REST API's from 0 to Azure and GCP with .NET 10, Docker e Kubernetes\n\nContact Support:\n Name: Erudio\n Email: contato@erudio.com.br",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "123105",
+		"_collection_link": "https://interstellar-robot-353353.postman.co/workspace/REST_WITH_ASP_NET_10~34239fb9-fa71-4cb7-ba7a-5e14ddb122c3/collection/123105-b3b178f0-9ef1-458d-9721-c0df94bb9cef?action=share&source=collection_link&creator=123105"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "book",
+					"item": []
+				},
+				{
+					"name": "person",
+					"item": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "/"
+		}
+	]
+}
