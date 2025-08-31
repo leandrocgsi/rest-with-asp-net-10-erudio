@@ -3,7 +3,7 @@ using RestWithASPNET10Erudio.Data.Converter.Impl;
 using RestWithASPNET10Erudio.Data.DTO.V2;
 using RestWithASPNET10Erudio.Model;
 
-namespace RestWithASPNET10Erudio.Tests
+namespace RestWithASPNET10Erudio.Tests.UnitTests
 {
     public class PersonConverterTests
     {
