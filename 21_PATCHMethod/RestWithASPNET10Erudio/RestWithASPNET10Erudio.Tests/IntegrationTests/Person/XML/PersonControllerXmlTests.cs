@@ -3,19 +3,20 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using RestWithASPNET10Erudio.Data.DTO.V1;
 using RestWithASPNET10Erudio.Tests.IntegrationTests.Tools;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace RestWithASPNET10Erudio.Tests.IntegrationTests.CORS
+namespace RestWithASPNET10Erudio.Tests.IntegrationTests.Person.XML
 {
     [TestCaseOrderer(
         "RestWithASPNET10Erudio.Tests.IntegrationTests.Tools.PriorityOrderer",
         "RestWithASPNET10Erudio.Tests")]
-    public class PersonControllerJsonTests : IClassFixture<SqlServerFixture>
+    public class PersonControllerXmlTests : IClassFixture<SqlServerFixture>
     {
         private readonly HttpClient _httpClient;
         private static PersonDTO _person;
 
-        public PersonControllerJsonTests(SqlServerFixture sqlFixture)
+        public PersonControllerXmlTests(SqlServerFixture sqlFixture)
         {
             var factory = new CustomWebApplicationFactory<Program>(
                 sqlFixture.ConnectionString);
@@ -26,6 +27,10 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.CORS
                     BaseAddress = new Uri("http://localhost")
                 }
             );
+
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/xml"));
         }
 
         [Fact(DisplayName = "01 - Create Person")]
@@ -44,13 +49,13 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.CORS
 
             // Act
             var response = await _httpClient
-                .PostAsJsonAsync("api/person/v1", request);
+                .PostAsync("api/person/v1",
+                XmlHelper.SerializeToXml(request));
 
             // Assert
             response.EnsureSuccessStatusCode();
 
-            var created = await response.Content
-                .ReadFromJsonAsync<PersonDTO>();
+            var created = await XmlHelper.ReadFromXmlAsync<PersonDTO>(response);
 
             created.Should().NotBeNull();
             created.Id.Should().BeGreaterThan(0);
@@ -71,13 +76,13 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.CORS
 
             // Act
             var response = await _httpClient
-                .PutAsJsonAsync("api/person/v1", _person);
+                .PutAsync("api/person/v1",
+                XmlHelper.SerializeToXml(_person));
 
             // Assert
             response.EnsureSuccessStatusCode();
 
-            var updated = await response.Content
-                .ReadFromJsonAsync<PersonDTO>();
+            var updated = await XmlHelper.ReadFromXmlAsync<PersonDTO>(response);
 
             updated.Should().NotBeNull();
             updated.Id.Should().BeGreaterThan(0);
@@ -100,8 +105,7 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.CORS
             // Assert
             response.EnsureSuccessStatusCode();
 
-            var disabled = await response.Content
-                .ReadFromJsonAsync<PersonDTO>();
+            var disabled = await XmlHelper.ReadFromXmlAsync<PersonDTO>(response);
 
             disabled.Should().NotBeNull();
             disabled.Id.Should().BeGreaterThan(0);
@@ -124,8 +128,7 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.CORS
             // Assert
             response.EnsureSuccessStatusCode();
 
-            var found = await response.Content
-                .ReadFromJsonAsync<PersonDTO>();
+            var found = await XmlHelper.ReadFromXmlAsync<PersonDTO>(response);
 
             found.Should().NotBeNull();
             found.Id.Should().Be(_person.Id);
@@ -157,8 +160,8 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.CORS
             // Assert
             response.EnsureSuccessStatusCode();
 
-            var list = await response.Content
-                .ReadFromJsonAsync<List<PersonDTO>>();
+            var list = await XmlHelper
+                .ReadFromXmlAsync<List<PersonDTO>>(response);
 
             list.Should().NotBeNull();
             list.Count.Should().BeGreaterThan(0);
