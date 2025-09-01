@@ -27,8 +27,8 @@
   </ItemGroup>
 
     <ItemGroup>
-		<Content Include="..\RestWithASPNET10Erudio\db\migrations\**\*.sql" Link="db\migrations\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always"/>
-		<Content Include="..\RestWithASPNET10Erudio\db\dataset\**\*.sql" Link="db\dataset\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always"/>
+		<Content Include="..\RestWithASPNET10Erudio\db\migrations\**\*.sql" Link="db\migrations\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+		<Content Include="..\RestWithASPNET10Erudio\db\dataset\**\*.sql" Link="db\dataset\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
     </ItemGroup>
 
   <ItemGroup>
