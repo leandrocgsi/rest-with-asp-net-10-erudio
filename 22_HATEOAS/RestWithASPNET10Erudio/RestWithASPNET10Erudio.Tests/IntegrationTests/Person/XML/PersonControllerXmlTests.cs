@@ -172,11 +172,11 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.Person.XML
             first.Enabled.Should().BeTrue();
             first.Gender.Should().Be("Male");
 
-            var fifth = list.First(p => p.FirstName == "Ada");
-            fifth.LastName.Should().Be("Lovelace");
-            fifth.Address.Should().Be("London - England");
-            fifth.Enabled.Should().BeTrue();
-            fifth.Gender.Should().Be("Female");
+            var third = list.First(p => p.FirstName == "Nelson");
+            third.LastName.Should().Be("Mandela");
+            third.Address.Should().Be("Mvezo - South Africa");
+            third.Enabled.Should().BeTrue();
+            third.Gender.Should().Be("Male");
         }
     }
 }
