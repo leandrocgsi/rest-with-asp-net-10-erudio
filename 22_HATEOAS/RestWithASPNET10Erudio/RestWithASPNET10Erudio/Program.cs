@@ -1,4 +1,5 @@
 using RestWithASPNET10Erudio.Configurations;
+using RestWithASPNET10Erudio.Hypermedia.Filters;
 using RestWithASPNET10Erudio.Repositories;
 using RestWithASPNET10Erudio.Repositories.Impl;
 using RestWithASPNET10Erudio.Services;
@@ -8,7 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSerilogLogging();
 
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+    {
+        options.Filters.Add<HypermediaFilter>();
+    })
     .AddContentNegotiation();
 
 
@@ -18,6 +22,7 @@ builder.Services.AddSwaggerConfig();
 builder.Services.AddRouteConfig();
 
 builder.Services.AddCorsConfiguration(builder.Configuration);
+builder.Services.AddHATEOASConfiguration();
 
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddEvolveConfiguration(builder.Configuration, builder.Environment);
@@ -42,6 +47,8 @@ app.UseRouting();
 app.UseCorsConfiguration(builder.Configuration);
 
 app.MapControllers();
+
+app.UseHATEOASRoutes();
 
 app.UseSwaggerSpecification();
 app.UseScalarConfiguration();
