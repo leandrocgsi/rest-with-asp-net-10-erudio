@@ -4,13 +4,12 @@ using RestWithASPNET10Erudio.Data.DTO.V1;
 using RestWithASPNET10Erudio.Tests.IntegrationTests.Tools;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace RestWithASPNET10Erudio.Tests.IntegrationTests.Person.XML
 {
     [TestCaseOrderer(
-        "RestWithASPNET10Erudio.Tests.IntegrationTests.Tools.PriorityOrderer",
-        "RestWithASPNET10Erudio.Tests")]
+        TestConfigs.TestCaseOrdererFullName,
+        TestConfigs.TestCaseOrdererAssembly)]
     public class PersonControllerXmlTests : IClassFixture<SqlServerFixture>
     {
         private readonly HttpClient _httpClient;
