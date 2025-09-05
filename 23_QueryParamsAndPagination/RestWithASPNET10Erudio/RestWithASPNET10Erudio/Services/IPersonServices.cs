@@ -1,4 +1,5 @@
 ﻿using RestWithASPNET10Erudio.Data.DTO.V1;
+using RestWithASPNET10Erudio.Hypermedia.Utils;
 
 namespace RestWithASPNET10Erudio.Services
 {
@@ -18,5 +19,8 @@ namespace RestWithASPNET10Erudio.Services
         PersonDTO Disable(long id);
 
         List<PersonDTO> FindByName(string firstName, string lastName);
+
+        PagedSearchDTO<PersonDTO> FindWithPagedSearch
+            (string name, string sortDirection, int pageSize, int page);
     }
 }

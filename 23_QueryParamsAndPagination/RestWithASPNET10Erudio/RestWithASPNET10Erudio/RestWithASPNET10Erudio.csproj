@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Hypermedia\Utils\PagedSearchDTO.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Utils\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Hypermedia\Utils\PagedSearchDTO.cs" />
   </ItemGroup>
 
   <ItemGroup>
