@@ -23,7 +23,9 @@ namespace RestWithASPNET10Erudio.Services.Impl
 
         public byte[] GetFile(string fileName)
         {
-            throw new NotImplementedException();
+            var filePath = Path.Combine(_basePath, fileName);
+            if (!File.Exists(filePath)) return null;
+            return File.ReadAllBytes(filePath);
         }
 
         public async Task<FileDetailDTO> SaveFileToDisk(IFormFile file)
@@ -44,7 +46,7 @@ namespace RestWithASPNET10Erudio.Services.Impl
             {
                 DocumentName = documentName,
                 DocType = file.ContentType,
-                DocUrl = $"{baseUrl}/api/file/v1/downloadFile{documentName}"
+                DocUrl = $"{baseUrl}/api/file/v1/downloadFile/{documentName}"
             };
 
             using var stream = new FileStream(destination, FileMode.Create);
@@ -53,9 +55,16 @@ namespace RestWithASPNET10Erudio.Services.Impl
             return fileDetail;
         }
 
-        public Task<List<FileDetailDTO>> SaveFilesToDisk(List<IFormFile> files)
+        public async Task<List<FileDetailDTO>> SaveFilesToDisk(List<IFormFile> files)
         {
-            throw new NotImplementedException();
+            var results = new List<FileDetailDTO>();
+            foreach (var file in files)
+            {
+                var detail = await SaveFileToDisk(file);
+                if (!string.IsNullOrEmpty(detail.DocumentName))
+                    results.Add(detail);
+            }
+            return results;
         }
     }
 }
