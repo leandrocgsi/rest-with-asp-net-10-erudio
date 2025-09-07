@@ -1,0 +1,16 @@
+INSERT INTO [dbo].[books] ([author], [launch_date], [price], [title]) VALUES
+('Michael C. Feathers', '2004-09-01 00:00:00.000000', 49.00, 'Working Effectively with Legacy Code'),
+('Ralph Johnson, Erich Gamma, John Vlissides, Richard Helm', '1994-10-21 00:00:00.000000', 45.00, 'Design Patterns: Elements of Reusable Object-Oriented Software'),
+('Robert C. Martin', '2008-08-11 00:00:00.000000', 77.00, 'Clean Code: A Handbook of Agile Software Craftsmanship'),
+('Douglas Crockford', '2008-05-15 00:00:00.000000', 67.00, 'JavaScript: The Good Parts'),
+('Steve McConnell', '2004-06-09 00:00:00.000000', 58.00, 'Code Complete (2nd Edition)'),
+('Martin Fowler, Kent Beck', '1999-07-08 00:00:00.000000', 88.00, 'Refactoring: Improving the Design of Existing Code'),
+('Eric Freeman, Elisabeth Freeman, Kathy Sierra, Bert Bates', '2004-10-25 00:00:00.000000', 110.00, 'Head First Design Patterns'),
+('Eric Evans', '2003-08-30 00:00:00.000000', 92.00, 'Domain-Driven Design: Tackling Complexity in the Heart of Software'),
+('Brian Goetz, Tim Peierls', '2006-05-09 00:00:00.000000', 80.00, 'Java Concurrency in Practice'),
+('Susan Cain', '2012-01-24 00:00:00.000000', 123.00, 'Quiet: The Power of Introverts in a World That Can''t Stop Talking'),
+('Roger S. Pressman', '2009-01-01 00:00:00.000000', 56.00, 'Software Engineering: A Practitioner''s Approach (7th Edition)'),
+('Viktor Mayer-Schonberger, Kenneth Kukier', '2013-03-05 00:00:00.000000', 54.00, 'Big Data: A Revolution That Will Transform How We Live, Work, and Think'),
+('Richard Hunter, George Westerman', '2009-01-01 00:00:00.000000', 95.00, 'The Real Business of IT: How CIOs Create and Communicate Value'),
+('Marc J. Schiller', '2012-01-01 00:00:00.000000', 45.00, 'The 11 Secrets of Highly Influential IT Leaders'),
+('Aguinaldo Aragon Fernandes, Vladimir Ferraz de Abreu', '2000-01-01 00:00:00.000000', 54.00, 'Implementing IT Governance: A Practical Guide to Global Best Practices in IT Management');
