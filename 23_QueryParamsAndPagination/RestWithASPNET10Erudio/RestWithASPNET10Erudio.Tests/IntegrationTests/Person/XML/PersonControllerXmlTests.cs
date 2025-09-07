@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RestWithASPNET10Erudio.Data.DTO.V1;
+using RestWithASPNET10Erudio.Hypermedia.Utils;
 using RestWithASPNET10Erudio.Tests.IntegrationTests.Tools;
 using System.Net;
 using System.Net.Http.Headers;
@@ -154,28 +155,39 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.Person.XML
         {
             // Arrange & Act
             var response = await _httpClient
-                .GetAsync("api/person/v1");
+                .GetAsync("api/person/v1/asc/10/1");
+            // <-- sortDirection=asc, pageSize=10, page=1
 
             // Assert
             response.EnsureSuccessStatusCode();
 
-            var list = await XmlHelper
-                .ReadFromXmlAsync<List<PersonDTO>>(response);
+            var page = await XmlHelper
+                .ReadFromXmlAsync<PagedSearchDTO<PersonDTO>>(response);
+
+            page.Should().NotBeNull();
+            page.CurrentPage.Should().Be(1);
+
+            var list = page?.List;
 
             list.Should().NotBeNull();
             list.Count.Should().BeGreaterThan(0);
 
-            var first = list.First(p => p.FirstName == "Ayrton");
-            first.LastName.Should().Be("Senna");
-            first.Address.Should().Be("São Paulo - Brasil");
-            first.Enabled.Should().BeTrue();
+            var first = list.First(p => p.FirstName == "Abbie");
+            first.LastName.Should().Be("Bassford");
+            first.Address.Should().Be("PO Box 88145");
+            first.Enabled.Should().BeFalse();
             first.Gender.Should().Be("Male");
 
-            var third = list.First(p => p.FirstName == "Nelson");
-            third.LastName.Should().Be("Mandela");
-            third.Address.Should().Be("Mvezo - South Africa");
-            third.Enabled.Should().BeTrue();
+            var third = list.First(p => p.FirstName == "Abner");
+            third.LastName.Should().Be("Castilla");
+            third.Address.Should().Be("8th Floor");
+            third.Enabled.Should().BeFalse();
             third.Gender.Should().Be("Male");
+
+            page.CurrentPage.Should().BeGreaterThan(0);
+            page.TotalResults.Should().BeGreaterThan(0);
+            page.PageSize.Should().BeGreaterThan(0);
+            page.SortDirections.Should().NotBeNull();
         }
     }
 }

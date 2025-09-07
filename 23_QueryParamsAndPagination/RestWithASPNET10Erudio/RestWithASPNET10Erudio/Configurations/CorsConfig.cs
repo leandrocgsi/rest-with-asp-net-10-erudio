@@ -52,8 +52,11 @@ namespace RestWithASPNET10Erudio.Configurations
 
             app.Use(async (context, next) =>
             {
+                var selfOrigin = $"{context.Request.Scheme}://{context.Request.Host}";
+
                 var origin = context.Request.Headers["Origin"].ToString();
                 if (!string.IsNullOrEmpty(origin) &&
+                    !origin.Equals(selfOrigin, StringComparison.OrdinalIgnoreCase) &&
                     !origins.Contains(origin, StringComparer.OrdinalIgnoreCase))
                 {
                     context.Response.StatusCode = StatusCodes.Status403Forbidden; // Forbidden

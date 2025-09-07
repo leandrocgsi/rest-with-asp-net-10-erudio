@@ -1,13 +1,12 @@
-﻿// using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RestWithASPNET10Erudio.Data.DTO.V1;
+using RestWithASPNET10Erudio.Hypermedia.Utils;
 using RestWithASPNET10Erudio.Services;
 
 namespace RestWithASPNET10Erudio.Controllers.V1
 {
     [ApiController]
     [Route("api/[controller]/v1")]
-    // [EnableCors("LocalPolicy")]
     public class PersonController : ControllerBase
     {
         private IPersonServices _personService;
@@ -20,14 +19,21 @@ namespace RestWithASPNET10Erudio.Controllers.V1
             _logger = logger;
         }
 
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof (List<PersonDTO>))]
+        [HttpGet("{sortDirection}/{pageSize}/{page}")]
+        [ProducesResponseType(200, Type = typeof (PagedSearchDTO<PersonDTO>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        public IActionResult Get()
+        public IActionResult Get(
+            [FromQuery] string name,
+            string sortDirection,
+            int pageSize,
+            int page
+            )
         {
-            _logger.LogInformation("Fetching all persons");
-            return Ok(_personService.FindAll());
+            _logger.LogInformation(
+                "Fetching persons with paged search: {name}, {sortDirection}, {pageSize}, {page}",
+                name, sortDirection, pageSize, page);
+            return Ok(_personService.FindWithPagedSearch(name, sortDirection, pageSize, page));
         }
 
         [HttpGet("find-by-name")]

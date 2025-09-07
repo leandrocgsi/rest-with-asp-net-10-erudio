@@ -1,5 +1,7 @@
-﻿using RestWithASPNET10Erudio.Model;
+﻿using RestWithASPNET10Erudio.Hypermedia.Utils;
+using RestWithASPNET10Erudio.Model;
 using RestWithASPNET10Erudio.Model.Context;
+using RestWithASPNET10Erudio.Repositories.QueryBuilders;
 
 namespace RestWithASPNET10Erudio.Repositories.Impl
 {
@@ -25,6 +27,25 @@ namespace RestWithASPNET10Erudio.Repositories.Impl
                 query = query.Where(p => p.LastName.Contains(lastName));
             // return query.ToList();
             return [.. query];
+        }
+
+        public PagedSearch<Person> FindWithPagedSearch(string name, string sortDirection, int pageSize, int page)
+        {
+            var queryBuilder = new PersonQueryBuilder();
+            var (query, countQuery, sort, size, offset) = queryBuilder.BuildQueries(
+                name, sortDirection, pageSize, page);
+
+            var persons = base.FindWithPagedSearch(query);
+            var totalResults = base.GetCount(countQuery);
+
+            return new PagedSearch<Person>
+            {
+                CurrentPage = page,
+                List = persons,
+                PageSize = size,
+                SortDirections = sort,
+                TotalResults = totalResults
+            };
         }
     }
 }

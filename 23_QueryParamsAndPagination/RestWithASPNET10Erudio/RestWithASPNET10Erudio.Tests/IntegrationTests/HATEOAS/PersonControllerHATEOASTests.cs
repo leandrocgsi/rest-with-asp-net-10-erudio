@@ -127,24 +127,17 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
             AssertLinkPattern(content, "delete");
         }
 
-        [Fact(DisplayName = "05 - Find All Persons")]
+        [Fact(DisplayName = "05 - Find Paged Persons with HATEOAS")]
         [TestPriority(5)]
         public async Task FindAll_ShouldReturnLinksForEachPerson()
         {
-            // ---------------------------
-            // Arrange
-            // ---------------------------
-            // In this test, there is no explicit Arrange step, because
-            // we are directly calling the API without preparing additional
-            // data or mocking dependencies. The system under test is expected
-            // to already contain one or more persons.
 
             // ---------------------------
             // Act
             // ---------------------------
             // Perform the HTTP GET request to retrieve all persons.
-            var response = await _httpClient.GetAsync("api/person/v1");
-            response.EnsureSuccessStatusCode(); // Ensures the response status code is 2xx.
+            var response = await _httpClient
+                .GetAsync("api/person/v1/asc/10/1");// Ensures the response status code is 2xx.
 
             // Read the response content as a string.
             var content = await response.Content.ReadAsStringAsync();
@@ -153,7 +146,7 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
             // Assert
             // ---------------------------
             // Extract all "id" values from the response JSON using Regex.
-            var idMatches = Regex.Matches(content, @"""id"":\s*(\d+)");
+            var idMatches = Regex.Matches(content, @"""list"":\s*\[\s*{[^}]*""id"":\s*(\d+)");
             idMatches.Count.Should().BeGreaterThan(0, "There should be at least one person");
 
             // Iterate through each person id found in the response.
@@ -162,7 +155,7 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
                 var id = match.Groups[1].Value;
 
                 // Expected hypermedia relations (HATEOAS links).
-                var expectedRels = new[] { "collection", "self", "create", "update", "delete" };
+                var expectedRels = new[] { "collection", "self", "create", "update", "patch", "delete" };
 
                 foreach (var rel in expectedRels)
                 {
@@ -171,7 +164,7 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
                     // For others, the link points to the base endpoint.
                     var pattern = rel switch
                     {
-                        "self" or "delete" =>
+                        "self" or "delete" or "patch" =>
                             $@"""rel"":\s*""{rel}"".*?""href"":\s*""https?://.+/api/person/v1/{id}""",
                         _ =>
                             $@"""rel"":\s*""{rel}"".*?""href"":\s*""https?://.+/api/person/v1"""
