@@ -1,4 +1,6 @@
 using RestWithASPNET10Erudio.Configurations;
+using RestWithASPNET10Erudio.Files.Exporters.Factory;
+using RestWithASPNET10Erudio.Files.Exporters.Impl;
 using RestWithASPNET10Erudio.Files.Importers.Factory;
 using RestWithASPNET10Erudio.Files.Importers.Impl;
 using RestWithASPNET10Erudio.Hypermedia.Filters;
@@ -36,6 +38,10 @@ builder.Services.AddScoped<PersonServicesImplV2>();
 builder.Services.AddScoped<CsvImporter>();
 builder.Services.AddScoped<XlsxImporter>();
 builder.Services.AddScoped<FileImporterFactory>();
+
+builder.Services.AddScoped<CsvExporter>();
+builder.Services.AddScoped<XlsxExporter>();
+builder.Services.AddScoped<FileExporterFactory>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
 builder.Services.AddScoped<IFileServices, FileServicesImpl>();

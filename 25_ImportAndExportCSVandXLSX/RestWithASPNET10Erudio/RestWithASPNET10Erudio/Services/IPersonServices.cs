@@ -1,4 +1,5 @@
-﻿using RestWithASPNET10Erudio.Data.DTO.V1;
+﻿using Microsoft.AspNetCore.Mvc;
+using RestWithASPNET10Erudio.Data.DTO.V1;
 using RestWithASPNET10Erudio.Hypermedia.Utils;
 
 namespace RestWithASPNET10Erudio.Services
@@ -28,5 +29,12 @@ namespace RestWithASPNET10Erudio.Services
         );
 
         Task<List<PersonDTO>> MassCreationAsync(IFormFile file);
+
+        FileContentResult ExportPage(
+            int page,
+            int pageSize,
+            string sortDirection,
+            string acceptHeader,
+            string name);
     }
 }

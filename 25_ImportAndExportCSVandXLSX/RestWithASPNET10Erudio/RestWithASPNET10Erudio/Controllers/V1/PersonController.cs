@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Mvc;
 using RestWithASPNET10Erudio.Data.DTO.V1;
 using RestWithASPNET10Erudio.Hypermedia.Utils;
 using RestWithASPNET10Erudio.Services;
@@ -138,20 +139,20 @@ namespace RestWithASPNET10Erudio.Controllers.V1
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         public async Task<IActionResult> MassCreation(
-            [FromForm] IFormFile file)
+            [FromForm] FileUploadDTO input)
         {
-            if (file == null || file.Length == 0)
+            if (input.File == null || input.File.Length == 0)
             {
                 _logger.LogWarning("No file uploaded for mass creation");
                 return BadRequest("File is Required!");
             }
-            _logger.LogInformation("Starting mass creation from uploaded file: {fileName}", file.FileName);
+            _logger.LogInformation("Starting mass creation from uploaded file: {fileName}", input.File.FileName);
 
-            var people = await _personService.MassCreationAsync(file);
+            var people = await _personService.MassCreationAsync(input.File);
 
             if (people == null)
             {
-                _logger.LogError("Mass creation failed for file: {fileName}", file.FileName);
+                _logger.LogError("Mass creation failed for file: {fileName}", input.File.FileName);
                 return NoContent();
             }
             _logger.LogInformation("Mass creation completed successfully with {count} records", people.Count);

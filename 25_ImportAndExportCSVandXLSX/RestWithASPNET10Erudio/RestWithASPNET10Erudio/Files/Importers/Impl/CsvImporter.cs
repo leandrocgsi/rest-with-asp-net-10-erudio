@@ -30,7 +30,7 @@ namespace RestWithASPNET10Erudio.Files.Importers.Impl
                     Gender = record.gender,
                     Enabled = true
                 };
-                people.Add(record);
+                people.Add(person);
             }
             return people;
         }
