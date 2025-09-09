@@ -26,5 +26,7 @@ namespace RestWithASPNET10Erudio.Services
             int pageSize,
             int page
         );
+
+        Task<List<PersonDTO>> MassCreationAsync(IFormFile file);
     }
 }

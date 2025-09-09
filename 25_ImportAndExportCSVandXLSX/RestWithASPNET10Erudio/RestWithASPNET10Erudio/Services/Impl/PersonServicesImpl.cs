@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using RestWithASPNET10Erudio.Data.DTO.V1;
+using RestWithASPNET10Erudio.Files.Importers.Factory;
 using RestWithASPNET10Erudio.Hypermedia.Utils;
 using RestWithASPNET10Erudio.Model;
 using RestWithASPNET10Erudio.Repositories;
@@ -10,9 +11,18 @@ namespace RestWithASPNET10Erudio.Services.Impl
     {
 
         private IPersonRepository _repository;
-        public PersonServicesImpl(IPersonRepository repository)
+        private readonly FileImporterFactory _fileImporterFactory;
+        private readonly ILogger<PersonServicesImpl> _logger;
+
+        public PersonServicesImpl(
+            IPersonRepository repository,
+            FileImporterFactory fileImporterFactory,
+            ILogger<PersonServicesImpl> logger
+            )
         {
             _repository = repository;
+            _fileImporterFactory = fileImporterFactory;
+            _logger = logger;
         }
 
         public List<PersonDTO> FindAll()
@@ -63,6 +73,34 @@ namespace RestWithASPNET10Erudio.Services.Impl
         {
             var result = _repository.FindWithPagedSearch(name, sortDirection, pageSize, page);
             return result.Adapt<PagedSearchDTO<PersonDTO>>();
+        }
+
+        public async Task<List<PersonDTO>> MassCreationAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                _logger.LogError("File is null or empty.");
+                throw new ArgumentException("File is null or empty.");
+            }
+
+            using var stream = file.OpenReadStream();
+            var fileName = file.FileName;
+            try
+            {   
+                var importer = _fileImporterFactory.GetImporter(fileName);
+                var persons = await importer.ImportFileAsync(stream);
+
+                var entities = persons
+                    .Select(dto => _repository.Create(
+                        dto.Adapt<Person>()))
+                        .ToList();
+                return entities.Adapt<List<PersonDTO>>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during mass creation from file: {FileName}", file.FileName);
+                throw;
+            }
         }
     }
 }

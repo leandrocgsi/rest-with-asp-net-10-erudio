@@ -132,5 +132,30 @@ namespace RestWithASPNET10Erudio.Controllers.V1
             _logger.LogDebug("Person with ID {id} disabled successfully", id);
             return Ok(disabledPerson);
         }
+
+        [HttpPost("massCreation")]
+        [ProducesResponseType(200, Type = typeof(List<PersonDTO>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> MassCreation(
+            [FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                _logger.LogWarning("No file uploaded for mass creation");
+                return BadRequest("File is Required!");
+            }
+            _logger.LogInformation("Starting mass creation from uploaded file: {fileName}", file.FileName);
+
+            var people = await _personService.MassCreationAsync(file);
+
+            if (people == null)
+            {
+                _logger.LogError("Mass creation failed for file: {fileName}", file.FileName);
+                return NoContent();
+            }
+            _logger.LogInformation("Mass creation completed successfully with {count} records", people.Count);
+            return Ok(people);
+        }
     }
 }
