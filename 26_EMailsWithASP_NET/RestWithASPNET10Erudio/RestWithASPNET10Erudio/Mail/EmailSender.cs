@@ -22,7 +22,7 @@ namespace RestWithASPNET10Erudio.Mail
         {
             _to = to;
             _recipients.Clear();
-            _recipients.Add(ParseRecipients(to));
+            _recipients.AddRange(ParseRecipients(to));
             return this;
         }
 
