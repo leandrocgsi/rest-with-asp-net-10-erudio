@@ -48,7 +48,7 @@ namespace RestWithASPNET10Erudio.Services.Impl
                     .To(emailRequest.To)
                     .WithSubject(emailRequest.Subject)
                     .WithMessage(emailRequest.Body)
-                    .Attach(attachment.FileName)
+                    .Attach(tempFilePath)
                     .Send();
             }
             catch (Exception ex)
