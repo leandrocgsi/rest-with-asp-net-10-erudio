@@ -21,11 +21,12 @@
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
     <PackageReference Include="Evolve" Version="3.3.0-alpha1" />
+    <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Mapster" Version="7.4.2-pre02" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml.Extensions" Version="9.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.7.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.8.3" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.1-dev-02317" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.1-dev-00953" />

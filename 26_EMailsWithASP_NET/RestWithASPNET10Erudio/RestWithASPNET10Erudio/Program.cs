@@ -4,6 +4,7 @@ using RestWithASPNET10Erudio.Files.Exporters.Impl;
 using RestWithASPNET10Erudio.Files.Importers.Factory;
 using RestWithASPNET10Erudio.Files.Importers.Impl;
 using RestWithASPNET10Erudio.Hypermedia.Filters;
+using RestWithASPNET10Erudio.Mail;
 using RestWithASPNET10Erudio.Repositories;
 using RestWithASPNET10Erudio.Repositories.Impl;
 using RestWithASPNET10Erudio.Services;
@@ -36,6 +37,9 @@ builder.Services.AddEvolveConfiguration(builder.Configuration, builder.Environme
 builder.Services.AddScoped<IPersonServices, PersonServicesImpl>();
 builder.Services.AddScoped<IBookServices, BookServicesImpl>();
 builder.Services.AddScoped<PersonServicesImplV2>();
+
+builder.Services.AddScoped<IEmailService, EmailServiceImpl>();
+builder.Services.AddScoped<EmailSender>();
 
 builder.Services.AddScoped<CsvImporter>();
 builder.Services.AddScoped<XlsxImporter>();
