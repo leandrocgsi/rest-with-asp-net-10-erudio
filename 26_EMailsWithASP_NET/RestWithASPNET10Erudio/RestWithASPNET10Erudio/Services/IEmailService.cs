@@ -4,7 +4,7 @@ namespace RestWithASPNET10Erudio.Services
 {
     public interface IEmailService
     {
-        void SendSimpleEmail(string to, string subject, string body);
+        void SendSimpleEmail(EmailRequestDTO emailRequest);
         Task SendEmailWithAttachment(EmailRequestDTO emailRequest,
             IFormFile attachment);
     }

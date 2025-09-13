@@ -38,7 +38,7 @@ namespace RestWithASPNET10Erudio.Mail
             return this;
         }
 
-        public EmailSender Attachment(string filePath)
+        public EmailSender Attach(string filePath)
         {
             if (File.Exists(filePath))
             {
