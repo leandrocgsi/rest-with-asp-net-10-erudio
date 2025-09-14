@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using RestWithASPNET10Erudio.Data.DTO.V1;
 using RestWithASPNET10Erudio.Tests.IntegrationTests.Tools;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 
@@ -15,6 +16,7 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
     {
         private readonly HttpClient _httpClient;
         private static PersonDTO? _person;
+        private static TokenDTO? _token;
 
         public PersonControllerHATEOASTests(SqlServerFixture sqlFixture)
         {
@@ -37,10 +39,44 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
                 .BeTrue($"Link with rel='{rel}' should exist and have valid href");
         }
 
+        [Fact(DisplayName = "00 - Sign In")]
+        [TestPriority(0)]
+        public async Task SignIn_ShouldReturnToken()
+        {
+            // Arrange
+            var credentials = new UserDTO
+            {
+                Username = "leandro",
+                Password = "admin123"
+            };
+
+            // Act
+            var response = await _httpClient
+                .PostAsJsonAsync("api/auth/signin", credentials);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var token = await response.Content
+                .ReadFromJsonAsync<TokenDTO>();
+
+            token.Should().NotBeNull();
+
+            token.AccessToken.Should().NotBeNullOrWhiteSpace();
+            token.RefreshToken.Should().NotBeNullOrWhiteSpace();
+
+            _token = token;
+        }
+
         [Fact(DisplayName = "01 - Create Person")]
         [TestPriority(1)]
         public async Task CreatePerson_ShouldContainHateoasLinks()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
             var request = new PersonDTO
             {
                 FirstName = "David",
@@ -68,11 +104,18 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(2)]
         public async Task UpdatePerson_ShouldContainHateoasLinks()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
             _person!.LastName = "Heinemeier Hansson";
 
+            // Act
             var response = await _httpClient.PutAsJsonAsync(
                 "/api/person/v1", _person);
 
+            // Assert
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -90,6 +133,12 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(3)]
         public async Task DisablePersonById_ShouldContainHateoasLinks()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
+            // Act
             var response = await _httpClient.PatchAsync(
                 $"/api/person/v1/{_person!.Id}", null);
 
@@ -111,6 +160,12 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(4)]
         public async Task GetPersonById_ShouldContainHateoasLinks()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
+            // Act
             var response = await _httpClient.GetAsync(
                 $"/api/person/v1/{_person!.Id}");
 
@@ -131,6 +186,10 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(5)]
         public async Task FindAll_ShouldReturnLinksForEachPerson()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
 
             // ---------------------------
             // Act

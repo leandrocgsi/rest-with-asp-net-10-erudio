@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using RestWithASPNET10Erudio.Data.DTO.V1;
 using RestWithASPNET10Erudio.Tests.IntegrationTests.Tools;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 
@@ -15,6 +16,7 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
     {
         private readonly HttpClient _httpClient;
         private static BookDTO? _book;
+        private static TokenDTO? _token;
 
         public BookControllerHateoasTests(SqlServerFixture sqlFixture)
         {
@@ -31,10 +33,45 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
             Regex.IsMatch(content, pattern).Should().BeTrue($"Link with rel='{rel}' should exist and have valid href");
         }
 
+
+        [Fact(DisplayName = "00 - Sign In")]
+        [TestPriority(0)]
+        public async Task SignIn_ShouldReturnToken()
+        {
+            // Arrange
+            var credentials = new UserDTO
+            {
+                Username = "leandro",
+                Password = "admin123"
+            };
+
+            // Act
+            var response = await _httpClient
+                .PostAsJsonAsync("api/auth/signin", credentials);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+
+            var token = await response.Content
+                .ReadFromJsonAsync<TokenDTO>();
+
+            token.Should().NotBeNull();
+
+            token.AccessToken.Should().NotBeNullOrWhiteSpace();
+            token.RefreshToken.Should().NotBeNullOrWhiteSpace();
+
+            _token = token;
+        }
+
         [Fact(DisplayName = "01 - Create Book")]
         [TestPriority(1)]
         public async Task CreateBook_ShouldContainHateoasLinks()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
             var request = new BookDTO
             {
                 Title = "Docker Deep Dive",
@@ -60,8 +97,14 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(2)]
         public async Task UpdateBook_ShouldContainHateoasLinks()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
             _book!.Title = "Docker Deep Dive - 2° Edition";
 
+            // Act
             var response = await _httpClient.PutAsJsonAsync("api/book/v1", _book);
             response.EnsureSuccessStatusCode();
 
@@ -79,7 +122,13 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(3)]
         public async Task GetBookById_ShouldContainHateoasLinks()
         {
-            var response = await _httpClient.GetAsync($"api/book/v1/{_book.Id}");
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
+            // Act
+            var response = await _httpClient.GetAsync($"api/book/v1/{_book?.Id}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -94,7 +143,15 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(4)]
         public async Task DeleteBookById_ShouldReturnNoContent()
         {
-            var response = await _httpClient.DeleteAsync($"api/book/v1/{_book.Id}");
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+            
+            // Act
+            var response = await _httpClient.DeleteAsync($"api/book/v1/{_book?.Id}");
+
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
@@ -102,6 +159,11 @@ namespace RestWithASPNET10Erudio.Tests.IntegrationTests.HATEOAS
         [TestPriority(5)]
         public async Task FindAll_ShouldReturnLinksForEachBook()
         {
+            // Arrange
+            _httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue
+                    ("Bearer", _token?.AccessToken);
+
             // Act
             var response = await _httpClient.GetAsync("api/book/v1");
             response.EnsureSuccessStatusCode();
