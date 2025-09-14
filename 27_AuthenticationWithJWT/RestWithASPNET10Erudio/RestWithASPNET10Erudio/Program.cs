@@ -55,7 +55,11 @@ builder.Services.AddScoped<FileExporterFactory>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
 builder.Services.AddScoped<IFileServices, FileServicesImpl>();
+
 builder.Services.AddScoped<IPasswordHasher, Sha256PasswordHasher>();
+builder.Services.AddScoped<IUserAuthService, UserAuthServiceImpl>();
+builder.Services.AddScoped<ILoginService, LoginServiceImpl>();
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

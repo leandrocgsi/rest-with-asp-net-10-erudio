@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace RestWithASPNET10Erudio.Controllers.V1
 {
     [ApiController]
     [Route("api/[controller]/v1")]
+    [Authorize("Bearer")]
     public class TestLogsController : ControllerBase
     {
 

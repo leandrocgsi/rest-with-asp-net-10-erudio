@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RestWithASPNET10Erudio.Data.DTO.V1;
 using RestWithASPNET10Erudio.Services;
 using System.Text.Json;
@@ -8,6 +9,7 @@ namespace RestWithASPNET10Erudio.Controllers.V1
 
     [ApiController]
     [Route("api/[controller]/v1")]
+    [Authorize("Bearer")]
     public class EmailController(
         IEmailService emailService,
         ILogger<EmailController> logger
