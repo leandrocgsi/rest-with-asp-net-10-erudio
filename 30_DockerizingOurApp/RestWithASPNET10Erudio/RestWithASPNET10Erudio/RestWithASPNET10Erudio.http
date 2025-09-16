@@ -1,4 +1,4 @@
-@RestWithASPNET10Erudio_HostAddress = http://localhost:5034
+@RestWithASPNET10Erudio_HostAddress = http://localhost:8080
 
 GET {{RestWithASPNET10Erudio_HostAddress}}/swagger-ui/index.html
 Accept: text/html
