@@ -8,7 +8,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8443
-      - MSSQLServerSQLConnection__MSSQLServerSQLConnectionString=Data Source=host.docker.internal,1433;Initial Catalog=asp_net_10_erudio;User Id=sa;Password=@Admin123;TrustServerCertificate=True;
+      - MSSQLServerSQLConnection__MSSQLServerSQLConnectionString=Data Source=host.docker.internal,1433;Initial Catalog=asp_net_10_erudio;User Id=sa;Password=@Admin123;TrustServerCertificate=True;"
     ports:
       - "8080"
       - "8443"
