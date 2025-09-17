@@ -4,7 +4,7 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "restwithaspnet10erudio": "StartDebugging"
+        "rest-with-asp-net-10-erudio": "StartDebugging"
       }
     }
   }
