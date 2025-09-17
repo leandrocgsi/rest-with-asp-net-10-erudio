@@ -18,6 +18,20 @@ services:
     networks:
       - erudio-network
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: always
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - erudio-network
+
 networks:
   erudio-network:
     driver: bridge
+
+volumes:
+  portainer_data:
