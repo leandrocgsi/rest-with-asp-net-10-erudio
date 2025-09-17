@@ -36,3 +36,19 @@ jobs:
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '10.0.x'
+    
+    - name: Restore Dependencies
+      run: dotnet restore RestWithASPNET10Erudio.sln
+      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
+    
+    - name: Build ASP.NET 10 App
+      run: dotnet build RestWithASPNET10Erudio.sln --configuration Release --no-restore
+      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
+    
+    - name: Test ASP.NET 10 App
+      run: dotnet test RestWithASPNET10Erudio.sln --configuration Release --no-build --logger "console;verbosity=detailed"  
+      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
+    
+    - name: Docker Compose Build
+      run: docker compose build
+      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
