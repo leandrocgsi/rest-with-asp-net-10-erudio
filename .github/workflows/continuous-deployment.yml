@@ -39,19 +39,19 @@ jobs:
     
     - name: Restore Dependencies
       run: dotnet restore RestWithASPNET10Erudio.sln
-      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
+      working-directory: 31_DeploingOurAppToAzure/RestWithASPNET10Erudio
     
     - name: Build ASP.NET 10 App
       run: dotnet build RestWithASPNET10Erudio.sln --configuration Release --no-restore
-      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
+      working-directory: 31_DeploingOurAppToAzure/RestWithASPNET10Erudio
     
     - name: Test ASP.NET 10 App
       run: dotnet test RestWithASPNET10Erudio.sln --configuration Release --no-build --logger "console;verbosity=detailed"  
-      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
+      working-directory: 31_DeploingOurAppToAzure/RestWithASPNET10Erudio
     
     - name: Docker Compose Build
       run: docker compose build
-      working-directory: 30_DockerizingOurApp/RestWithASPNET10Erudio
+      working-directory: 31_DeploingOurAppToAzure/RestWithASPNET10Erudio
     
     - name: Push to Docker Hub Container Registry
       run: |

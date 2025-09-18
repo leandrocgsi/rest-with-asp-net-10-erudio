@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "rest-with-asp-net-10-erudio": "StartDebugging"
+      }
+    }
+  }
+}
