@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Como Inicializar um Contêiner Docker com o SQL Server - Guia Completo</title>
+  <link rel="icon" href="https://github.com/leandrocgsi/blog-images/blob/main/logos/favicon-16x16-1.png?raw=true" sizes="32x32" />
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; color:#1f2937; line-height:1.7; }
+    header { background:#363636; border-bottom:1px solid #e5e7eb; }
+    .header-content { max-width:800px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; padding:20px; }
+    .logo img, .stars img { max-width:200px; height:auto; }
+    .main-nav { background:#fff; border-bottom:2px solid #e5e7eb; box-shadow:0 2px 4px rgba(0,0,0,0.05); position:sticky; top:0; z-index:100; }
+    .nav-content { max-width:800px; margin:0 auto; display:flex; justify-content:space-around; flex-wrap:wrap; padding:0; }
+    .nav-link { display:block; padding:15px 10px; text-decoration:none; color:#1f2937; font-weight:500; font-size:14px; transition:all 0.3s; border-bottom:3px solid transparent; text-align:center; }
+    .nav-link:hover { color:#2563eb; border-bottom-color:#2563eb; background:#f9fafb; }
+    main { max-width:800px; margin:40px auto; padding:30px 20px; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    h1 { color:#111827; font-size:28px; margin-bottom:20px; text-align:center; }
+    h2 { margin-top:40px; color:#111827; }
+    h3 { margin-top:25px; color:#111827; font-size:18px; }
+    h4 { margin-top:15px; color:#111827; font-size:16px; }
+    p { margin-bottom:18px; text-align:justify; }
+    ul, ol { margin:16px 0 16px 24px; }
+    li { margin-bottom:10px; }
+    .highlight { background:#f3f4f6; padding:15px; border-left:4px solid #16a34a; border-radius:4px; margin:20px 0; }
+    .warning { background:#fef3c7; padding:15px; border-left:4px solid #f59e0b; border-radius:4px; margin:20px 0; }
+    .info { background:#dbeafe; padding:15px; border-left:4px solid #2563eb; border-radius:4px; margin:20px 0; }
+    .code-block { background:#1f2937; color:#f9fafb; padding:20px; border-radius:6px; overflow-x:auto; font-family:'Courier New', monospace; font-size:14px; line-height:1.6; margin:20px 0; }
+    .code-block code { display:block; white-space:pre; }
+    .link-button { display:inline-block; margin:12px 8px 0 0; padding:10px 20px; background:#2563eb; color:#fff; border-radius:6px; text-decoration:none; font-size:15px; transition:background .3s; }
+    .link-button:hover { background:#1d4ed8; }
+    .course-banner { text-align:center; margin:40px 0 20px 0; }
+    .course-banner img { border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,0.15); transition:transform .3s; max-width:100%; height:auto; }
+    .course-banner img:hover { transform:scale(1.02); }
+    footer { text-align:center; padding:40px 20px; background:#fff; margin-top:60px; border-top:1px solid #e5e7eb; }
+    .social-icons { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; padding-top:30px; }
+    .social-icons a { width:52px; height:52px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center; transition:transform .2s; text-decoration:none; }
+    .social-icons a:hover { transform:translateY(-2px); }
+    .social-icons img { max-width:36px; max-height:36px; }
+    #copyright-text { text-align:center; margin-top:25px; color:#4b5563; font-size:14px; }
+    table { width:100%; border-collapse:collapse; margin:20px 0; }
+    th, td { border:1px solid #e5e7eb; padding:12px; text-align:left; }
+    th { background:#f3f4f6; }
+    .repo-box { background:#f0fdf4; padding:20px; border:3px solid #16a34a; border-radius:8px; margin:30px 0; text-align:center; }
+    .repo-box h3 { margin-top:0; color:#15803d; }
+    .repo-link { display:inline-block; margin:15px 0; padding:15px 30px; background:#16a34a; color:#fff; border-radius:8px; text-decoration:none; font-size:18px; font-weight:bold; transition:background .3s; }
+    .repo-link:hover { background:#15803d; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-content">
+    <div class="logo"><a href="https://pub.erudio.com.br/kr/premium_courses"><img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/cropped-teste_logo-2.png?raw=true" alt="Erudio Training"></a></div>
+    <div class="stars"><img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/five_stars.png?raw=true" alt="Cinco Estrelas"></div>
+  </div>
+</header>
+
+<nav class="main-nav">
+  <div class="nav-content">
+    <a href="#introducao" class="nav-link">Introdução</a>
+    <a href="#docker-run" class="nav-link">Docker Run</a>
+    <a href="#docker-compose" class="nav-link">Docker Compose</a>
+    <a href="#conexao" class="nav-link">Conexão</a>
+    <a href="#problemas" class="nav-link">Problemas</a>
+    <a href="#seguranca" class="nav-link">Segurança</a>
+  </div>
+</nav>
+
+<main>
+  <h1 id="introducao">Como Inicializar um Contêiner Docker com o SQL Server - Guia Completo</h1>
+
+  <p>O <strong>Microsoft SQL Server</strong> é um dos sistemas de gerenciamento de banco de dados relacionais mais utilizados no mundo corporativo. Desenvolvido pela Microsoft, ele oferece alta performance, segurança robusta e suporte a recursos avançados como replicação, transações distribuídas, integração com ferramentas analíticas e compatibilidade nativa com o ecossistema .NET e Azure. Neste guia completo, vamos explorar duas abordagens para trabalhar com SQL Server: executando via <strong>Docker</strong> (método recomendado para desenvolvimento) e instalando diretamente no sistema operacional (para ambientes de produção ou necessidades específicas).</p>
+
+  <h2>Por Que Usar SQL Server com Docker?</h2>
+
+  <p>Executar o SQL Server em containers Docker oferece vantagens significativas especialmente em ambientes de desenvolvimento e testes. A principal vantagem é a <strong>portabilidade</strong> - você pode ter instâncias isoladas do SQL Server sem interferir em outras instalações ou no sistema operacional. Isso elimina o famoso problema de conflitos de versões e configurações.</p>
+
+  <p>A <strong>reprodutibilidade</strong> é outra vantagem crítica. Com um arquivo docker-compose.yml, toda a equipe de desenvolvimento pode ter exatamente o mesmo ambiente de banco de dados, com as mesmas versões, configurações e até mesmo dados iniciais. Não há mais aquele problema de "funciona no meu banco mas não funciona no seu".</p>
+
+  <p>O <strong>isolamento</strong> garante que diferentes projetos podem usar diferentes versões do SQL Server simultaneamente na mesma máquina, sem conflitos. Você pode ter um projeto usando SQL Server 2019 e outro usando SQL Server 2022, ambos rodando ao mesmo tempo em containers separados.</p>
+
+  <p>Por fim, a <strong>limpeza</strong> é facilitada - quando você não precisa mais de uma instância, basta remover o container. Não ficam arquivos espalhados pelo sistema, registros no Windows ou serviços rodando em background consumindo recursos.</p>
+
+  <h2 id="docker-run">1. Executando o SQL Server em um Contêiner Docker</h2>
+
+  <p>A maneira mais prática e rápida de usar o SQL Server é executando-o dentro de um contêiner Docker. Esse método elimina a necessidade de instalação manual e permite isolar o banco de dados do restante do sistema. Antes de tudo, é importante garantir que o Docker esteja instalado e em execução na sua máquina.</p>
+
+  <h3>1.1. Verificando os Pré-requisitos</h3>
+
+  <p>Antes de iniciar, verifique se o Docker está instalado e funcionando:</p>
+
+  <div class="code-block"><code># Verificar versão do Docker
+docker --version
+
+# Verificar se o daemon está rodando
+docker ps</code></div>
+
+  <p>Se esses comandos executarem sem erros, você está pronto para prosseguir. Caso contrário, consulte a documentação oficial do Docker para instalação no seu sistema operacional.</p>
+
+  <div class="highlight">
+    <p><strong>Requisitos de Hardware:</strong> O SQL Server requer no mínimo 2GB de RAM. Certifique-se de que o Docker Desktop está configurado para usar pelo menos 4GB de RAM (recomendado 8GB para melhor performance).</p>
+  </div>
+
+  <h3>1.2. Iniciando com o Comando docker run</h3>
+
+  <p>A forma mais direta de executar o SQL Server é através do comando docker run. Este método é ideal para testes rápidos ou quando você precisa de uma instância temporária:</p>
+
+  <div class="code-block"><code>docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=@Admin123" \
+  -p 1433:1433 --name sqlserver -d \
+  mcr.microsoft.com/mssql/server:2022-latest</code></div>
+
+  <p>Vamos entender cada parâmetro deste comando em detalhes:</p>
+
+  <ul>
+    <li><strong>docker run</strong> – Comando principal que cria e executa um novo contêiner a partir de uma imagem.</li>
+    <li><strong>-e "ACCEPT_EULA=Y"</strong> – Variável de ambiente que aceita automaticamente o End-User License Agreement (EULA) da Microsoft. Este parâmetro é obrigatório.</li>
+    <li><strong>-e "MSSQL_SA_PASSWORD=@Admin123"</strong> – Define a senha do usuário administrador do sistema (SA - System Administrator). A senha deve atender aos requisitos de complexidade do SQL Server: mínimo 8 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.</li>
+    <li><strong>-p 1433:1433</strong> – Mapeia a porta padrão do SQL Server no contêiner (1433) para a mesma porta no host. O formato é PORTA_HOST:PORTA_CONTAINER. Isso permite que aplicações externas se conectem ao banco.</li>
+    <li><strong>--name sqlserver</strong> – Atribui um nome fixo ao contêiner, facilitando comandos futuros como stop, start, logs, etc.</li>
+    <li><strong>-d</strong> – Executa o contêiner em modo detached (segundo plano), liberando o terminal.</li>
+    <li><strong>mcr.microsoft.com/mssql/server:2022-latest</strong> – Especifica a imagem oficial do SQL Server 2022 hospedada no Microsoft Container Registry (MCR).</li>
+  </ul>
+
+  <h3>1.3. Verificando o Status do Contêiner</h3>
+
+  <p>Após executar o comando, aguarde alguns segundos para o SQL Server inicializar completamente. Você pode verificar o status com:</p>
+
+  <div class="code-block"><code># Listar contêineres em execução
+docker ps
+
+# Visualizar logs do SQL Server
+docker logs sqlserver
+
+# Seguir logs em tempo real
+docker logs -f sqlserver</code></div>
+
+  <p>Quando o SQL Server estiver pronto, você verá mensagens como:</p>
+
+  <div class="code-block"><code>SQL Server is now ready for client connections.
+This is an informational message; no user action is required.</code></div>
+
+  <h3>1.4. Requisitos de Senha do SQL Server</h3>
+
+  <div class="warning">
+    <p><strong>⚠️ Importante - Política de Senhas:</strong> O SQL Server exige senhas fortes para o usuário SA. A senha deve conter:</p>
+    <ul>
+      <li>Pelo menos 8 caracteres</li>
+      <li>Letras maiúsculas (A-Z)</li>
+      <li>Letras minúsculas (a-z)</li>
+      <li>Números (0-9)</li>
+      <li>Símbolos especiais (!@#$%^&*)</li>
+    </ul>
+    <p>Senhas que não atendem esses requisitos farão o container falhar ao iniciar.</p>
+  </div>
+
+  <h3 id="docker-compose">1.5. Usando o Docker Compose (Método Recomendado)</h3>
+
+  <p>Outra forma mais organizada e reprodutível de configurar o SQL Server é através de um arquivo <strong>docker-compose.yml</strong>. Esta abordagem é ideal para ambientes de desenvolvimento de equipe, pois permite versionar a configuração junto com o código do projeto.</p>
+
+  <p>Crie um arquivo chamado <code>docker-compose.yml</code> na raiz do seu projeto:</p>
+
+  <div class="code-block"><code>version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    hostname: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "@Admin123"
+      MSSQL_PID: "Developer"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "@Admin123" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  sqlserver_data:
+    driver: local</code></div>
+
+  <p>Detalhando cada elemento da configuração:</p>
+
+  <ul>
+    <li><strong>version: '3.8'</strong> – Especifica a versão do formato do Docker Compose. A versão 3.8 é estável e amplamente suportada.</li>
+    <li><strong>services:</strong> – Define os serviços que serão executados. Aqui temos apenas o SQL Server, mas poderíamos adicionar outros serviços como Redis, RabbitMQ, etc.</li>
+    <li><strong>image:</strong> – Indica a imagem Docker oficial do SQL Server 2022.</li>
+    <li><strong>container_name:</strong> – Nome fixo do contêiner, facilitando identificação e comandos.</li>
+    <li><strong>hostname:</strong> – Define o hostname interno do contêiner, útil para comunicação entre containers na mesma rede.</li>
+    <li><strong>ports:</strong> – Mapeamento de portas entre host e container (HOST:CONTAINER).</li>
+    <li><strong>environment:</strong> – Variáveis de ambiente para configuração do SQL Server.</li>
+    <li><strong>MSSQL_PID:</strong> – Define a edição do SQL Server. Opções: Developer (gratuito), Express, Standard, Enterprise.</li>
+    <li><strong>volumes:</strong> – Monta volumes para persistência de dados e scripts de inicialização.</li>
+    <li><strong>restart: unless-stopped</strong> – Política de restart automático do container.</li>
+    <li><strong>healthcheck:</strong> – Verifica periodicamente se o SQL Server está respondendo corretamente.</li>
+  </ul>
+
+  <h3>1.6. Iniciando com Docker Compose</h3>
+
+  <p>Com o arquivo docker-compose.yml criado, execute:</p>
+
+  <div class="code-block"><code># Iniciar os serviços
+docker compose up -d
+
+# Verificar status
+docker compose ps
+
+# Ver logs
+docker compose logs -f sqlserver
+
+# Parar os serviços
+docker compose down
+
+# Parar e remover volumes (apaga todos os dados!)
+docker compose down -v</code></div>
+
+  <h3>1.7. Persistência de Dados com Volumes</h3>
+
+  <p>Por padrão, quando um container é removido, todos os dados são perdidos. Para evitar isso, usamos volumes Docker. No exemplo acima, o volume <code>sqlserver_data</code> garante que seus bancos de dados, tabelas e dados permaneçam intactos mesmo se você remover e recriar o container.</p>
+
+  <p>Os dados ficam armazenados em:</p>
+  <ul>
+    <li><strong>Linux:</strong> /var/lib/docker/volumes/</li>
+    <li><strong>Windows:</strong> \\wsl$\docker-desktop-data\data\docker\volumes\</li>
+    <li><strong>macOS:</strong> ~/Library/Containers/com.docker.docker/Data/</li>
+  </ul>
+
+  <h3>1.8. Scripts de Inicialização</h3>
+
+  <p>Você pode automatizar a criação de bancos de dados, tabelas e dados iniciais colocando scripts SQL na pasta <code>init-scripts/</code>. Crie um arquivo <code>init-scripts/01-create-database.sql</code>:</p>
+
+  <div class="code-block"><code>-- Criar banco de dados
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'MeuBancoDeDados')
+BEGIN
+    CREATE DATABASE MeuBancoDeDados;
+END
+GO
+
+USE MeuBancoDeDados;
+GO
+
+-- Criar tabela de exemplo
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Usuarios')
+BEGIN
+    CREATE TABLE Usuarios (
+        Id INT PRIMARY KEY IDENTITY(1,1),
+        Nome NVARCHAR(100) NOT NULL,
+        Email NVARCHAR(100) NOT NULL,
+        DataCriacao DATETIME DEFAULT GETDATE()
+    );
+END
+GO
+
+-- Inserir dados de teste
+INSERT INTO Usuarios (Nome, Email) VALUES 
+('João Silva', 'joao@email.com'),
+('Maria Santos', 'maria@email.com');
+GO</code></div>
+
+  <h2>2. Versões Disponíveis do SQL Server</h2>
+
+  <p>A Microsoft disponibiliza várias versões do SQL Server como imagens Docker. Aqui estão as principais:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Versão</th>
+        <th>Tag Docker</th>
+        <th>Características</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>SQL Server 2022</td>
+        <td>mcr.microsoft.com/mssql/server:2022-latest</td>
+        <td>Versão mais recente com recursos avançados</td>
+      </tr>
+      <tr>
+        <td>SQL Server 2019</td>
+        <td>mcr.microsoft.com/mssql/server:2019-latest</td>
+        <td>Versão estável e amplamente adotada</td>
+      </tr>
+      <tr>
+        <td>SQL Server 2017</td>
+        <td>mcr.microsoft.com/mssql/server:2017-latest</td>
+        <td>Primeira versão com suporte a Linux</td>
+      </tr>
+      <tr>
+        <td>Azure SQL Edge</td>
+        <td>mcr.microsoft.com/azure-sql-edge</td>
+        <td>Versão otimizada para IoT e Edge Computing</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="conexao">3. Conectando-se ao SQL Server</h2>
+
+  <p>Depois que o contêiner estiver em execução, você pode se conectar usando diversos clientes SQL. Aqui estão as opções mais populares:</p>
+
+  <h3>3.1. SQL Server Management Studio (SSMS)</h3>
+
+  <p>O <strong>SSMS</strong> é a ferramenta oficial da Microsoft para gerenciar SQL Server. Disponível apenas para Windows, oferece interface gráfica completa com recursos avançados de administração, query design, debugging e profiling.</p>
+
+  <p><a href="https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms" target="_blank" class="link-button">Download SSMS</a></p>
+
+  <p>Credenciais de conexão:</p>
+  <div class="code-block"><code>Server Type: Database Engine
+Server Name: localhost,1433
+Authentication: SQL Server Authentication
+Login: sa
+Password: @Admin123</code></div>
+
+  <h3>3.2. Azure Data Studio</h3>
+
+  <p>O <strong>Azure Data Studio</strong> é uma ferramenta multiplataforma (Windows, Linux, macOS) moderna e leve, ideal para desenvolvimento. Suporta extensões, notebooks SQL e integração com Git.</p>
+
+  <p><a href="https://azure.microsoft.com/en-us/products/data-studio/" target="_blank" class="link-button">Download Azure Data Studio</a></p>
+
+  <h3>3.3. DBeaver</h3>
+
+  <p>O <strong>DBeaver</strong> é um cliente SQL universal e gratuito que suporta dezenas de bancos de dados, incluindo SQL Server. Excelente para quem trabalha com múltiplos SGBDs.</p>
+
+  <p><a href="https://dbeaver.io/download/" target="_blank" class="link-button">Download DBeaver</a></p>
+
+  <h3>3.4. Linha de Comando com sqlcmd</h3>
+
+  <p>Você também pode se conectar diretamente via terminal usando a ferramenta sqlcmd que já vem instalada no container:</p>
+
+  <div class="code-block"><code># Conectar ao SQL Server dentro do container
+docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U sa -P "@Admin123"
+
+# Executar queries
+1> SELECT @@VERSION;
+2> GO
+
+# Listar bancos de dados
+1> SELECT name FROM sys.databases;
+2> GO
+
+# Sair
+1> EXIT</code></div>
+
+  <h3>3.5. String de Conexão para Aplicações</h3>
+
+  <p>Para conectar suas aplicações ao SQL Server rodando no Docker, use estas connection strings:</p>
+
+  <div class="code-block"><code># .NET (Entity Framework Core)
+Server=localhost,1433;Database=MeuBancoDeDados;User Id=sa;Password=@Admin123;TrustServerCertificate=True;
+
+# Java (JDBC)
+jdbc:sqlserver://localhost:1433;databaseName=MeuBancoDeDados;user=sa;password=@Admin123;encrypt=true;trustServerCertificate=true;
+
+# Python (pyodbc)
+Driver={ODBC Driver 18 for SQL Server};Server=localhost,1433;Database=MeuBancoDeDados;UID=sa;PWD=@Admin123;TrustServerCertificate=yes;
+
+# Node.js (mssql)
+{
+  server: 'localhost',
+  port: 1433,
+  database: 'MeuBancoDeDados',
+  user: 'sa',
+  password: '@Admin123',
+  options: {
+    encrypt: true,
+    trustServerCertificate: true
+  }
+}</code></div>
+
+  <h2>4. Instalando o SQL Server no Sistema Operacional</h2>
+
+  <p>Embora o Docker seja a forma mais prática para desenvolvimento, há cenários onde a instalação nativa é necessária: ambientes de produção corporativos, requisitos de compliance, integração com Active Directory ou necessidade de recursos específicos do sistema operacional.</p>
+
+  <h3>4.1. Instalação no Windows</h3>
+
+  <p>No <strong>Windows</strong>, o método mais simples é baixar o instalador oficial no site da Microsoft. O processo de instalação é guiado por um wizard intuitivo.</p>
+
+  <p><a href="https://www.microsoft.com/pt-br/sql-server/sql-server-downloads" target="_blank" class="link-button">Baixar SQL Server para Windows</a></p>
+
+  <p><strong>Edições disponíveis:</strong></p>
+  <ul>
+    <li><strong>Developer Edition:</strong> Gratuita, com todos os recursos da Enterprise Edition, mas licenciada apenas para desenvolvimento e testes.</li>
+    <li><strong>Express Edition:</strong> Gratuita, ideal para pequenas aplicações. Limitada a 10GB por banco e 1GB de RAM.</li>
+    <li><strong>Standard Edition:</strong> Versão comercial com recursos intermediários.</li>
+    <li><strong>Enterprise Edition:</strong> Versão completa com todos os recursos corporativos.</li>
+  </ul>
+
+  <h3>4.2. Instalação no Linux</h3>
+
+  <p>O SQL Server está disponível para as principais distribuições Linux: Ubuntu, Red Hat Enterprise Linux (RHEL), SUSE Linux Enterprise Server (SLES) e containers Docker.</p>
+
+  <p><strong>Exemplo de instalação no Ubuntu 22.04:</strong></p>
+
+  <div class="code-block"><code># Importar chave GPG da Microsoft
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Adicionar repositório do SQL Server
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)"
+
+# Atualizar índice de pacotes
+sudo apt-get update
+
+# Instalar SQL Server
+sudo apt-get install -y mssql-server
+
+# Executar configuração inicial
+sudo /opt/mssql/bin/mssql-conf setup
+
+# Verificar status do serviço
+sudo systemctl status mssql-server</code></div>
+
+  <h3>4.3. macOS</h3>
+
+  <p>O <strong>macOS</strong> não possui suporte nativo ao SQL Server devido a limitações de arquitetura e licenciamento. No entanto, você tem três opções viáveis:</p>
+
+  <ul>
+    <li><strong>Docker (Recomendado):</strong> Use o método descrito no início deste guia. É a forma mais prática e funciona perfeitamente no macOS.</li>
+    <li><strong>Azure SQL Database:</strong> Utilize uma instância do SQL Server na nuvem Azure. Ideal para desenvolvimento com necessidade de recursos cloud.</li>
+    <li><strong>VM Windows:</strong> Execute Windows em uma máquina virtual e instale o SQL Server normalmente.</li>
+  </ul>
+
+  <h2>5. Gerenciamento e Manutenção</h2>
+
+  <h3>5.1. Comandos Úteis do Docker</h3>
+
+  <div class="code-block"><code># Parar o SQL Server
+docker stop sqlserver
+
+# Iniciar o SQL Server
+docker start sqlserver
+
+# Reiniciar o SQL Server
+docker restart sqlserver
+
+# Ver logs em tempo real
+docker logs -f sqlserver
+
+# Ver últimas 100 linhas de log
+docker logs --tail 100 sqlserver
+
+# Remover o container (dados em volumes são preservados)
+docker rm -f sqlserver
+
+# Ver uso de recursos
+docker stats sqlserver
+
+# Inspecionar configuração do container
+docker inspect sqlserver
+
+# Executar comandos dentro do container
+docker exec -it sqlserver bash</code></div>
+
+  <h3>5.2. Backup e Restore</h3>
+
+  <p><strong>Fazer backup de um banco:</strong></p>
+
+  <div class="code-block"><code># Criar diretório para backups no host
+mkdir -p ~/sql-backups
+
+# Fazer backup
+docker exec sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U sa -P "@Admin123" \
+  -Q "BACKUP DATABASE MeuBancoDeDados TO DISK = '/var/opt/mssql/data/MeuBancoDeDados.bak' WITH FORMAT, INIT"
+
+# Copiar backup do container para o host
+docker cp sqlserver:/var/opt/mssql/data/MeuBancoDeDados.bak ~/sql-backups/</code></div>
+
+  <p><strong>Restaurar um banco:</strong></p>
+
+  <div class="code-block"><code># Copiar backup do host para o container
+docker cp ~/sql-backups/MeuBancoDeDados.bak sqlserver:/var/opt/mssql/data/
+
+# Restaurar banco
+docker exec sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U sa -P "@Admin123" \
+  -Q "RESTORE DATABASE MeuBancoDeDados FROM DISK = '/var/opt/mssql/data/MeuBancoDeDados.bak' WITH REPLACE"</code></div>
+
+  <h2 id="problemas">6. Resolução de Problemas Comuns</h2>
+
+  <h3>6.1. Container Não Inicia</h3>
+
+  <p><strong>Problema:</strong> O container sqlserver para imediatamente após iniciar.</p>
+
+  <p><strong>Soluções:</strong></p>
+  <ul>
+    <li><strong>Senha fraca:</strong> Verifique se a senha atende os requisitos (8+ caracteres, maiúsculas, minúsculas, números e símbolos)</li>
+    <li><strong>Memória insuficiente:</strong> Aumente a RAM disponível para o Docker (mínimo 2GB, recomendado 4GB)</li>
+    <li><strong>Porta em uso:</strong> Verifique se outra aplicação está usando a porta 1433</li>
+  </ul>
+
+  <div class="code-block"><code># Verificar logs de erro
+docker logs sqlserver
+
+# Verificar se porta está em uso
+netstat -an | grep 1433    # Linux/macOS
+netstat -an | findstr 1433  # Windows
+
+# Testar com porta diferente
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=@Admin123" \
+  -p 1434:1433 --name sqlserver2 -d \
+  mcr.microsoft.com/mssql/server:2022-latest</code></div>
+
+  <h3>6.2. Não Consegue Conectar</h3>
+
+  <p><strong>Problema:</strong> Aplicação não consegue conectar ao SQL Server.</p>
+
+  <p><strong>Soluções:</strong></p>
+
+  <div class="code-block"><code># Verificar se container está rodando
+docker ps
+
+# Verificar se SQL Server está aceitando conexões
+docker logs sqlserver | grep "ready for client connections"
+
+# Testar conexão do host
+docker exec sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U sa -P "@Admin123" -Q "SELECT @@VERSION"
+
+# Verificar firewall (Windows)
+# Permitir porta 1433 no Windows Firewall
+
+# Verificar rede Docker
+docker network inspect bridge</code></div>
+
+  <h3>6.3. Erro de Autenticação</h3>
+
+  <p><strong>Problema:</strong> "Login failed for user 'sa'"</p>
+
+  <p><strong>Soluções:</strong></p>
+  <ul>
+    <li>Verifique se a senha está correta (case-sensitive)</li>
+    <li>Adicione <code>TrustServerCertificate=True</code> na connection string</li>
+    <li>Use <code>encrypt=true;trustServerCertificate=true</code> em aplicações Java</li>
+  </ul>
+
+  <h3>6.4. Performance Baixa</h3>
+
+  <p><strong>Problema:</strong> Queries lentas ou timeouts frequentes.</p>
+
+  <p><strong>Soluções:</strong></p>
+
+  <div class="code-block"><code># Aumentar memória disponível
+docker update --memory 4g --memory-swap 8g sqlserver
+
+# Verificar uso de recursos
+docker stats sqlserver
+
+# Otimizar configurações de memória
+docker exec sqlserver /opt/mssql/bin/mssql-conf set memory.memorylimitmb 3072
+
+# Reiniciar container
+docker restart sqlserver</code></div>
+
+  <h3>6.5. Espaço em Disco Cheio</h3>
+
+  <p><strong>Problema:</strong> Volume do Docker fica sem espaço.</p>
+
+  <p><strong>Soluções:</strong></p>
+
+  <div class="code-block"><code># Ver uso de espaço do Docker
+docker system df
+
+# Limpar recursos não utilizados
+docker system prune -a --volumes
+
+# Fazer backup e limpar logs de transação
+docker exec sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U sa -P "@Admin123" \
+  -Q "BACKUP LOG MeuBancoDeDados TO DISK = '/var/opt/mssql/data/log_backup.trn'"
+
+# Reduzir log de transação
+docker exec sqlserver /opt/mssql-tools/bin/sqlcmd \
+  -S localhost -U sa -P "@Admin123" \
+  -Q "DBCC SHRINKFILE (MeuBancoDeDados_log, 1)"</code></div>
+
+  <h2 id="seguranca">7. Boas Práticas de Segurança</h2>
+
+  <h3>7.1. Senhas Fortes</h3>
+
+  <p>Nunca use senhas simples como "123456" ou "password". Para ambientes de produção, considere usar geradores de senhas e armazenar em cofres seguros como:</p>
+  <ul>
+    <li>Azure Key Vault</li>
+    <li>AWS Secrets Manager</li>
+    <li>HashiCorp Vault</li>
+    <li>Docker Secrets (para Docker Swarm)</li>
+  </ul>
+
+  <h3>7.2. Não Exponha Portas Desnecessariamente</h3>
+
+  <p>Em produção, evite expor a porta 1433 publicamente. Use redes internas do Docker:</p>
+
+  <div class="code-block"><code>version: '3.8'
+
+services:
+  app:
+    image: minha-aplicacao
+    networks:
+      - app-network
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks:
+      - app-network
+    # Sem mapeamento de porta externa!
+    expose:
+      - "1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "@Admin123"
+
+networks:
+  app-network:
+    driver: bridge</code></div>
+
+  <h3>7.3. Crie Usuários Específicos</h3>
+
+  <p>Evite usar o usuário SA em aplicações. Crie usuários com permissões limitadas:</p>
+
+  <div class="code-block"><code>-- Criar login
+CREATE LOGIN app_user WITH PASSWORD = '@AppUser123';
+
+-- Criar usuário no banco
+USE MeuBancoDeDados;
+CREATE USER app_user FOR LOGIN app_user;
+
+-- Conceder permissões mínimas
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA::dbo TO app_user;
+
+-- Negar permissões administrativas
+DENY CONTROL ON DATABASE::MeuBancoDeDados TO app_user;</code></div>
+
+  <h3>7.4. Habilite Criptografia</h3>
+
+  <p>Para ambientes sensíveis, habilite TLS/SSL:</p>
+
+  <div class="code-block"><code>version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "@Admin123"
+      MSSQL_ENABLE_HADR: "1"
+      MSSQL_ENCRYPT_CONNECTIONS: "true"
+    volumes:
+      - ./certs:/var/opt/mssql/secrets</code></div>
+
+  <h3>7.5. Faça Backups Regulares</h3>
+
+  <p>Automatize backups usando cron jobs ou scripts agendados:</p>
+
+  <div class="code-block"><code>#!/bin/bash
+# backup-sqlserver.sh
+
+BACKUP_DIR="/backups/sqlserver"
+DATE=$(date +%Y%m%d_%H%M%S)
+DATABASES=("MeuBancoDeDados" "OutroBanco")
+
+for DB in "${DATABASES[@]}"; do
+    docker exec sqlserver /opt/mssql-tools/bin/sqlcmd \
+        -S localhost -U sa -P "@Admin123" \
+        -Q "BACKUP DATABASE $DB TO DISK = '/var/opt/mssql/data/${DB}_${DATE}.bak' WITH FORMAT, INIT"
+    
+    docker cp sqlserver:/var/opt/mssql/data/${DB}_${DATE}.bak $BACKUP_DIR/
+done
+
+# Manter apenas últimos 7 dias de backup
+find $BACKUP_DIR -name "*.bak" -mtime +7 -delete</code></div>
+
+  <h2>8. Monitoramento e Performance</h2>
+
+  <h3>8.1. Queries de Monitoramento</h3>
+
+  <div class="code-block"><code>-- Verificar conexões ativas
+SELECT 
+    session_id,
+    login_name,
+    host_name,
+    program_name,
+    status,
+    cpu_time,
+    memory_usage
+FROM sys.dm_exec_sessions
+WHERE is_user_process = 1;
+
+-- Identificar queries lentas
+SELECT TOP 10
+    qs.total_elapsed_time / qs.execution_count AS avg_elapsed_time,
+    qs.execution_count,
+    SUBSTRING(qt.text, (qs.statement_start_offset/2)+1,
+        ((CASE qs.statement_end_offset
+            WHEN -1 THEN DATALENGTH(qt.text)
+            ELSE qs.statement_end_offset
+        END - qs.statement_start_offset)/2) + 1) AS query_text
+FROM sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) qt
+ORDER BY avg_elapsed_time DESC;
+
+-- Verificar uso de CPU e memória
+SELECT 
+    sqlserver_start_time,
+    (SELECT COUNT(*) FROM sys.dm_exec_sessions WHERE is_user_process = 1) AS user_connections,
+    cpu_count,
+    physical_memory_kb / 1024 / 1024 AS physical_memory_gb
+FROM sys.dm_os_sys_info;
+
+-- Ver tamanho dos bancos de dados
+SELECT 
+    DB_NAME(database_id) AS DatabaseName,
+    SUM(size * 8 / 1024) AS SizeMB
+FROM sys.master_files
+GROUP BY database_id
+ORDER BY SizeMB DESC;</code></div>
+
+  <h3>8.2. Ferramentas de Monitoramento</h3>
+
+  <p>Para ambientes corporativos, considere usar:</p>
+  <ul>
+    <li><strong>SQL Server Profiler:</strong> Ferramenta integrada para trace de eventos</li>
+    <li><strong>Extended Events:</strong> Successor do Profiler, mais leve e eficiente</li>
+    <li><strong>Azure Monitor:</strong> Para SQL Server na nuvem</li>
+    <li><strong>Grafana + Prometheus:</strong> Stack open source para monitoramento</li>
+    <li><strong>Datadog, New Relic:</strong> Soluções comerciais completas</li>
+  </ul>
+
+  <h2>9. Diferenças entre Edições</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Recurso</th>
+        <th>Express</th>
+        <th>Developer</th>
+        <th>Standard</th>
+        <th>Enterprise</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Preço</td>
+        <td>Gratuito</td>
+        <td>Gratuito</td>
+        <td>Pago</td>
+        <td>Pago</td>
+      </tr>
+      <tr>
+        <td>Uso</td>
+        <td>Produção limitada</td>
+        <td>Apenas dev/teste</td>
+        <td>Produção</td>
+        <td>Produção</td>
+      </tr>
+      <tr>
+        <td>Máx. RAM</td>
+        <td>1 GB</td>
+        <td>Ilimitado</td>
+        <td>128 GB</td>
+        <td>Ilimitado</td>
+      </tr>
+      <tr>
+        <td>Máx. DB Size</td>
+        <td>10 GB</td>
+        <td>Ilimitado</td>
+        <td>Ilimitado</td>
+        <td>Ilimitado</td>
+      </tr>
+      <tr>
+        <td>Máx. CPUs</td>
+        <td>4 cores</td>
+        <td>Ilimitado</td>
+        <td>24 cores</td>
+        <td>Ilimitado</td>
+      </tr>
+      <tr>
+        <td>Always On</td>
+        <td>❌</td>
+        <td>✅</td>
+        <td>✅ (Básico)</td>
+        <td>✅ (Completo)</td>
+      </tr>
+      <tr>
+        <td>Columnstore</td>
+        <td>❌</td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>✅</td>
+      </tr>
+      <tr>
+        <td>In-Memory OLTP</td>
+        <td>❌</td>
+        <td>✅</td>
+        <td>❌</td>
+        <td>✅</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Acesse os Arquivos de Configuração no GitHub</h2>
+
+  <div class="repo-box">
+    <h3>📦 Código Completo no GitHub</h3>
+    <p>Todos os arquivos docker-compose.yml, scripts SQL de inicialização e exemplos de configuração desta seção estão disponíveis no repositório oficial do curso:</p>
+    <a href="https://github.com/leandrocgsi/rest-with-spring-boot-and-java-erudio" target="_blank" class="repo-link">
+      github.com/leandrocgsi/rest-with-spring-boot-and-java-erudio
+    </a>
+    <p style="margin-top:15px;">Procure pelo diretório <strong>docker-configs/sqlserver</strong> para ver a implementação completa incluindo docker-compose.yml otimizado, scripts de inicialização, configurações de backup automatizado e exemplos de integração com aplicações Spring Boot.</p>
+  </div>
+
+  <h2>Área de Membros Premium da Erudio Training</h2>
+
+  <p>Agora que você domina SQL Server com Docker, está pronto para arquiteturas completas de microsserviços. Na <a href="https://pub.erudio.com.br/kr/premium_courses" target="_blank" rel="noopener"><strong>Área de Membros Premium da Erudio Training</strong></a>, você aprende a orquestrar stacks completas com Docker Compose, implementar estratégias avançadas de backup e disaster recovery, configurar clusters de alta disponibilidade com Always On, integração com ferramentas de monitoramento como Prometheus e Grafana, e toda a infraestrutura necessária para ambientes de produção empresariais.</p>
+
+  <div class="course-banner">
+    <a href="https://pub.erudio.com.br/kr/premium_courses" target="_blank" rel="noopener">
+      <img decoding="async" title="Cursos Premium Erudio" src="https://github.com/leandrocgsi/blog-images/blob/main/00-vip-meber.png?raw=true" alt="Cursos Premium Erudio">
+    </a>
+  </div>
+
+  <p style="margin-top:20px;">Aprenda a construir ambientes de banco de dados resilientes, escaláveis e seguros, com pipelines de CI/CD automatizados, estratégias de migração zero-downtime e monitoramento em tempo real. Domine as práticas que grandes empresas usam para manter bancos de dados críticos operando 24/7 com SLAs de 99.99% de uptime!</p>
+
+  <h2>Conclusão</h2>
+
+  <p>Executar o SQL Server em containers Docker transformou completamente a forma como desenvolvemos aplicações que dependem de bancos de dados Microsoft. A combinação de portabilidade, isolamento e facilidade de uso torna o Docker a escolha ideal para ambientes de desenvolvimento e testes. Para produção, tanto a instalação nativa quanto containers são opções válidas, dependendo dos requisitos específicos do seu projeto e infraestrutura.</p>
+
+  <p>Neste guia completo, você aprendeu não apenas como executar o SQL Server tecnicamente, mas como pensar estrategicamente sobre ambientes de banco de dados containerizados. Você compreendeu as diferenças fundamentais entre containers e VMs, dominou tanto docker run quanto Docker Compose para gerenciamento declarativo, implementou persistência de dados com volumes Docker, configurou scripts de inicialização automatizados, explorou todas as edições disponíveis e suas diferenças, aprendeu a conectar com múltiplas ferramentas cliente, implementou boas práticas de segurança essenciais, configurou estratégias de backup e restore, e diagnosticou e resolveu problemas comuns de forma profissional.</p>
+
+  <div class="highlight">
+    <h4 style="margin-top:0; color:#111827; font-size:18px;">✅ Checklist de Conhecimentos Adquiridos</h4>
+    <ul style="margin-bottom:0;">
+      <li>✅ Compreende as vantagens de usar SQL Server com Docker</li>
+      <li>✅ Sabe executar SQL Server com docker run e docker compose</li>
+      <li>✅ Configurou persistência de dados com volumes</li>
+      <li>✅ Implementou scripts de inicialização automatizados</li>
+      <li>✅ Conhece as diferenças entre edições (Express, Developer, Standard, Enterprise)</li>
+      <li>✅ Conecta usando SSMS, Azure Data Studio e outras ferramentas</li>
+      <li>✅ Implementou senhas fortes e políticas de segurança</li>
+      <li>✅ Criou usuários com permissões limitadas</li>
+      <li>✅ Configurou backup e restore automatizados</li>
+      <li>✅ Sabe diagnosticar problemas comuns (conexão, autenticação, performance)</li>
+      <li>✅ Usa queries de monitoramento para análise de performance</li>
+      <li>✅ Aplica boas práticas de segurança e manutenção</li>
+      <li>✅ Compreende quando usar Docker vs instalação nativa</li>
+      <li>✅ Configurou healthchecks e políticas de restart</li>
+    </ul>
+  </div>
+
+  <p>Continue praticando criando seus próprios ambientes de desenvolvimento com Docker Compose, incluindo SQL Server, suas aplicações e outros serviços necessários. Experimente diferentes versões do SQL Server, teste estratégias de backup, configure monitoramento. E lembre-se: dominar containers é uma habilidade essencial para o desenvolvedor moderno - não apenas para bancos de dados, mas para toda a infraestrutura de aplicações. Nos vemos na próxima seção!</p>
+
+  <h2>Recursos Adicionais</h2>
+  <div style="margin-top:16px;">
+    <a href="https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker" target="_blank" class="link-button">Documentação Oficial Microsoft</a>
+    <a href="https://hub.docker.com/_/microsoft-mssql-server" target="_blank" class="link-button">SQL Server no Docker Hub</a>
+    <a href="https://learn.microsoft.com/en-us/sql/ssms/" target="_blank" class="link-button">SQL Server Management Studio</a>
+    <a href="https://azure.microsoft.com/en-us/products/data-studio/" target="_blank" class="link-button">Azure Data Studio</a>
+  </div>
+</main>
+
+<footer>
+  <div class="social-icons">
+    <a href="https://www.youtube.com/@erudiotraining" target="_blank" aria-label="YouTube">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/youtube_logo_min.png?raw=true" alt="YouTube" />
+    </a>
+    <a href="https://www.linkedin.com/company/erudiotraining" target="_blank" aria-label="LinkedIn">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/linkedin_logo_min.png?raw=true" alt="LinkedIn" />
+    </a>
+    <a href="https://github.com/leandrocgsi" target="_blank" aria-label="GitHub">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/github_logo_min.png?raw=true" alt="GitHub" />
+    </a>
+    <a href="https://pub.erudio.com.br/kr/premium_courses" target="_blank" aria-label="Udemy">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/udemy_logo.png?raw=true" alt="Udemy" />
+    </a>
+    <a href="https://www.instagram.com/erudiotraining" target="_blank" aria-label="Instagram">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/instagram.png?raw=true" alt="Instagram" />
+    </a>
+    <a href="https://www.facebook.com/erudiotraining" target="_blank" aria-label="Facebook">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/facebook.png?raw=true" alt="Facebook" />
+    </a>
+    <a href="https://www.threads.net/@erudiotraining" target="_blank" aria-label="Threads">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/threads.png?raw=true" alt="Threads" />
+    </a>
+    <a href="https://www.tiktok.com/@erudiotraining" target="_blank" aria-label="TikTok">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/tiktok.png?raw=true" alt="TikTok" />
+    </a>
+    <a href="https://x.com/erudiotraining" target="_blank" aria-label="X">
+      <img src="https://github.com/leandrocgsi/blog-images/blob/main/logos/twitter.png?raw=true" alt="X (Twitter)" />
+    </a>
+  </div>
+
+  <p id="copyright-text">
+    © Copyright - Erudio Training - 2011-<span id="current-year"></span> - CNPJ: 34.523.711/0001-62 - Todos os Direitos Reservados
+  </p>
+
+  <script>
+    document.getElementById("current-year").textContent = new Date().getFullYear();
+  </script>
+</footer>
+</body>
+</html>
